@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "quiubi",
+  "description": "Controllo movimenti in quiubi",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "quiubi.png"
+  },
+  "background": {
+    "page": "quiubi_page.html"
+  },
+  "permissions": [
+    "https://www.quiubi.it/*"
+  ],
+  "content_scripts": [{
+      "matches": ["https://www.quiubi.it/*"],
+      "js": ["quiubiMediator.js"],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ]
+}
