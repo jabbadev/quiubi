@@ -2,8 +2,12 @@
 var port = chrome.runtime.connect({name:"quiubi"});
 
 var Operation = function(){
+	var self = this;
 	this.login = function(userCredential){
 		console.info('execute login');
+		var errorBox = document.getElementById("ERRORSDIV");
+		console.log('prima: ',errorBox.innerText);
+		
 		var user = document.getElementById("quiubi_user");
 		user.value = userCredential.user;
 		var user = document.getElementById("quiubi_password");
@@ -16,11 +20,23 @@ var Operation = function(){
 		    'cancelable': true
 		  });
 		subMit.dispatchEvent(clickEvent);
+		
+		self._onLoad = function(){
+			var errorBox = document.getElementById("ERRORSDIV");
+			console.log('dopo: ',errorBox.innerText);
+		};
 	};
 	
 	this.isUserLogged = function(){
 		var errorBox = document.getElementById("ERRORSDIV");
-		console.log(errorBox.innerText);
+		console.log('dopo: ',errorBox.innerText);
+	};
+	
+	this._onLoad = function(){console.log('onLoad vuota');};
+	
+	this.onLoad = function(){
+		console.log('fire operation onLoad');
+		this._onLoad();
 	};
 };
 
@@ -39,6 +55,9 @@ var MsgHandler = function(port){
 
 var mh = new MsgHandler(port);
 
-chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
-	mh.handle(message,sendResponse);
-});
+window.onload = function(){
+	console.log('fire on load ...');
+	operation._onLoad();
+};
+
+
