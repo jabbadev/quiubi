@@ -4,77 +4,86 @@ var target = null;
 
 var Target = {
 	target: null,
-	getInstance: function(url,TargetImp){
-		
+	getInstance: function(url,TargetImp,onTargetReady){	
 		if(!this.target){
-			this.target = new TargetImp();	
+			this.target = new TargetImp(url,onTargetReady);	
 			return this.target;
 		}
 		return target;
+	},
+	attachPort: function(port){
+		this.target.attachPort(port);
 	}
 };
 
-var Quiubi = function(url){
+var Quiubi = function(url,onTagerReady){
 	this.iframe = null;
-	this.mediator = null;
+	this.port = null;
+	this.targetReady = false;
 	this.url = url;
+	this.onTagerReady = onTagerReady;
 	
-	this.attachTarget = function(){
-		var self = this;
-		
-		this.iframe = document.getElementById('target');
-		//quf.src = "https://www.quiubi.it/page/qui-ubi/";
-		this.iframe.src = this.url;
-		this.iframe.onload= function(){
-			if(self.mediator){
-				console.info('target reloaded ...');
-				self.onTargetReloaded();
-			}
-			else {
-				console.info('target ready ...');
-				self.mediator = mediator;
-				console.info('mediator ready ...',self.mediator);
-			}
-		};
+	var self = this;
+	
+	this.attachPort = function(port){
+		if( port.name="quiubi" ){
+			this.port = port;
+		}
+		if ( this.iframe && this.port && !this.targetReady ){
+			this.onTagerReady(this);
+		}
 	};
 	
 	this.login = function(user,password){
 		console.log('login for [%s]',user);
-		this.mediator.login(user,password);
+		this.port.postMessage({
+			operation: 'login',
+			options:{ user:user,password:password }
+		});
+	};
+	
+	this.isUserLogged = function(){
+		this.port.postMessage({
+			operation: 'isUserLogged',
+			options:{}
+		});
 	};
 	
 	this.onTargetReloaded = function(){
 		console.log('implement target reloaded ...');
-		
 	};
-};
-
-var QuiubiMediator = function(port){
-	this.login = function(user,password){
-		console.log('login');
-		port.postMessage({operation: 'login',
-						  options:{ user:user,password:password }
-						 });
+	
+	/* Constructure code */ 
+	this.iframe = document.getElementById('target');
+	//quf.src = "https://www.quiubi.it/page/qui-ubi/";
+	this.iframe.src = this.url;
+	this.iframe.onload= function(){
+		if(self.targetReady){
+			console.info('target reloaded ...');
+			self.onTargetReloaded();
+		}
+		else {
+			console.info('target ready ...');
+			if ( self.iframe && self.port ){
+				self.targetReady = true;
+				self.onTagerReady(self);
+			}
+		}
 	};
+	
 };
 
 chrome.runtime.onConnect.addListener(function(port){
    if( port.name="quiubi" ){
 	   console.log("mediator [%s] connected ...",port.name);
-	   mediator = new QuiubiMediator(port);
+	   target.attachPort(port);
    }
 });
 
 chrome.browserAction.onClicked.addListener(function(){
-	target = Target.getInstance("https://www.quiubi.it/page/qui-ubi/",Quiubi);
-	target.attachTarget();
-	/*
-	quf = document.getElementById('quiubiFrame');
-	quf.src = "https://www.quiubi.it/page/qui-ubi/";
-	quf.onload= function(){	
-		mediator.login('fra','123456');
-	};
-	*/
+	target = Target.getInstance("https://www.quiubi.it/page/qui-ubi/",Quiubi,function(target){
+		console.log('target ready ',target);
+	});
 });
 
 document.addEventListener('DOMContentLoaded', function () {	
