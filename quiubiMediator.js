@@ -23,6 +23,17 @@ var Operation = function(){
 		    'cancelable': true
 		  });
 		subMit.dispatchEvent(clickEvent);
+		
+	};
+	
+	this.saldo = function(){
+		var hrefMovCC = document.querySelector('a[href="/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC"');
+		var clickEvent = new MouseEvent('click', {
+		  'view': window,
+		  'bubbles': true,
+		  'cancelable': true
+		});
+		hrefMovCC.dispatchEvent(clickEvent);
 	};
 	
 	this.isUserLogged = function(loggedUser){
@@ -58,25 +69,3 @@ var Operation = function(){
 };
 
 var operation = new Operation();
-
-/*
-var MsgHandler = function(port){
-	var self = this; 
-	port.onMessage.addListener(function(message){self.handleMessage(message);});
-	
-	this.handleMessage = function(message){
-		if ( message.operation == "login" ) operation.login(message.options);
-		if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
-	};
-};
-*/
-
-/*
-window.onload = function(){
-	console.log('fire on load .........');
-	port = chrome.runtime.connect({name:"quiubi"});
-	port.onMessage.addListener(function(message){
-		if ( message.operation == "login" ) operation.login(message.options);
-		if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
-	});
-};*/

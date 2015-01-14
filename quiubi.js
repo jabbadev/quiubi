@@ -34,12 +34,18 @@ var Quiubi = function(url,onTagerReady){
 		}
 	};
 	
-	this.login = function(user,password){
+	this.login = function(user,password,onResponse){
 		console.log('login for [%s]',user);
 		this.port.postMessage({
 			operation: 'login',
 			options:{ user:user,password:password }
 		});
+		
+		this._onTargetReady = function(){
+			this.isUserLogged(user,function(loginStatus){
+				onResponse(loginStatus);
+			});
+		}; 
 	};
 	
 	this.isUserLogged = function(user,onResponse){
@@ -57,6 +63,7 @@ var Quiubi = function(url,onTagerReady){
 	
 	this.onTargetReloaded = function(){
 		console.log('implement target reloaded ...');
+		this._onTargetReady();
 	};
 	
 	/* Constructure code */ 
