@@ -1,12 +1,15 @@
 
+console.log('fire quiubi mediator');
 var port = chrome.runtime.connect({name:"quiubi"});
+port.onMessage.addListener(function(message){
+	if ( message.operation == "login" ) operation.login(message.options);
+	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
+});
 
 var Operation = function(){
-	var self = this;
+	
 	this.login = function(userCredential){
 		console.info('execute login');
-		var errorBox = document.getElementById("ERRORSDIV");
-		console.log('prima: ',errorBox.innerText);
 		
 		var user = document.getElementById("quiubi_user");
 		user.value = userCredential.user;
@@ -20,44 +23,60 @@ var Operation = function(){
 		    'cancelable': true
 		  });
 		subMit.dispatchEvent(clickEvent);
+	};
+	
+	this.isUserLogged = function(loggedUser){
+		var loginStatus = {status: false, info: "Condizione inattesa"};
 		
-		self._onLoad = function(){
-			var errorBox = document.getElementById("ERRORSDIV");
-			console.log('dopo: ',errorBox.innerText);
-		};
+		var errorMsgBox = document.getElementById("ERRORSDIV");
+		
+		if( !!errorMsgBox ){
+			if ( errorMsgBox.innerText == "Attenzione\n" ){
+				loginStatus = { status: false, info: "Utente non loggato" };
+			}
+			if ( errorMsgBox.innerText == "Attenzione\nAutenticazione fallita (errore generico)"){
+				loginStatus = { status: false, info: "Autenticazione fallita" };
+			} 
+		}
+		else {
+			var tdList = document.querySelectorAll('div.header  table table tr td');
+			var user = (tdList[4].innerText).split(' ')[2];
+			if ( user == loggedUser ){
+				loginStatus = {status: true, info: "Utente [" + user + " ] correttamente connesso" };
+			}
+			else {
+				loginStatus = { status: false, info: "Autenticazione avvenuta con utente differente" };
+			}
+		}
+		
+		port.postMessage({
+			operation: "userLoggedHandler",
+			options: loginStatus
+		});
 	};
 	
-	this.isUserLogged = function(){
-		var errorBox = document.getElementById("ERRORSDIV");
-		console.log('dopo: ',errorBox.innerText);
-	};
-	
-	this._onLoad = function(){console.log('onLoad vuota');};
-	
-	this.onLoad = function(){
-		console.log('fire operation onLoad');
-		this._onLoad();
-	};
 };
 
 var operation = new Operation();
 
+/*
 var MsgHandler = function(port){
 	var self = this; 
 	port.onMessage.addListener(function(message){self.handleMessage(message);});
 	
 	this.handleMessage = function(message){
 		if ( message.operation == "login" ) operation.login(message.options);
-		if ( message.operation == "isUserLogged" ) operation.isUserLogged();
-		
+		if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
 	};
 };
+*/
 
-var mh = new MsgHandler(port);
-
+/*
 window.onload = function(){
-	console.log('fire on load ...');
-	operation._onLoad();
-};
-
-
+	console.log('fire on load .........');
+	port = chrome.runtime.connect({name:"quiubi"});
+	port.onMessage.addListener(function(message){
+		if ( message.operation == "login" ) operation.login(message.options);
+		if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
+	});
+};*/

@@ -13,7 +13,11 @@
     "https://www.quiubi.it/*"
   ],
   "content_scripts": [{
-      "matches": ["https://www.quiubi.it/*"],
+      "matches": [
+      	"https://www.quiubi.it/page/qui-ubi?*",
+      	"https://www.quiubi.it/page/qui-ubi/",
+      	"https://www.quiubi.it/qubictx/jsp/pages/home.jspx?*"
+      ],
       "js": ["quiubiMediator.js"],
       "all_frames": true,
       "run_at": "document_start"

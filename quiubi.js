@@ -42,11 +42,17 @@ var Quiubi = function(url,onTagerReady){
 		});
 	};
 	
-	this.isUserLogged = function(){
+	this.isUserLogged = function(user,onResponse){
+		this._userLoggedHandler = onResponse;
+		
 		this.port.postMessage({
 			operation: 'isUserLogged',
-			options:{}
+			options: user
 		});
+	};
+	
+	this.userLoggedHandler = function(loginStatus){
+		this._userLoggedHandler(loginStatus);
 	};
 	
 	this.onTargetReloaded = function(){
@@ -63,7 +69,6 @@ var Quiubi = function(url,onTagerReady){
 			self.onTargetReloaded();
 		}
 		else {
-			console.info('target ready ...');
 			if ( self.iframe && self.port ){
 				self.targetReady = true;
 				self.onTagerReady(self);
@@ -77,8 +82,13 @@ chrome.runtime.onConnect.addListener(function(port){
    if( port.name="quiubi" ){
 	   console.log("mediator [%s] connected ...",port.name);
 	   target.attachPort(port);
+	   
+	   port.onMessage.addListener(function(message){
+		   if ( message.operation == "userLoggedHandler" ) target.userLoggedHandler(message.options);  
+	   });
    }
 });
+
 
 chrome.browserAction.onClicked.addListener(function(){
 	target = Target.getInstance("https://www.quiubi.it/page/qui-ubi/",Quiubi,function(target){
