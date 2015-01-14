@@ -4,6 +4,7 @@ var port = chrome.runtime.connect({name:"quiubi"});
 port.onMessage.addListener(function(message){
 	if ( message.operation == "login" ) operation.login(message.options);
 	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
+	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
 });
 
 var Operation = function(){
@@ -26,7 +27,7 @@ var Operation = function(){
 		
 	};
 	
-	this.saldo = function(){
+	this.accessToMovimentiCC = function(){
 		var hrefMovCC = document.querySelector('a[href="/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC"');
 		var clickEvent = new MouseEvent('click', {
 		  'view': window,

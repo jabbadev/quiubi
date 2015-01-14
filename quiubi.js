@@ -34,7 +34,7 @@ var Quiubi = function(url,onTagerReady){
 		}
 	};
 	
-	this.login = function(user,password,onResponse){
+	this.login = function(user,password,onAuthComplete){
 		console.log('login for [%s]',user);
 		this.port.postMessage({
 			operation: 'login',
@@ -43,7 +43,7 @@ var Quiubi = function(url,onTagerReady){
 		
 		this._onTargetReady = function(){
 			this.isUserLogged(user,function(loginStatus){
-				onResponse(loginStatus);
+				onAuthComplete(loginStatus);
 			});
 		}; 
 	};
@@ -59,6 +59,16 @@ var Quiubi = function(url,onTagerReady){
 	
 	this.userLoggedHandler = function(loginStatus){
 		this._userLoggedHandler(loginStatus);
+	};
+	
+	this.saldo = function(onSaldo){
+		this.port.postMessage({
+			operation: 'accessToMovimentiCC'
+		});
+		
+		this._onTargetReady = function(){
+			console.log('now in movimenti cc');
+		};
 	};
 	
 	this.onTargetReloaded = function(){
