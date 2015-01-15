@@ -14,9 +14,10 @@
   ],
   "content_scripts": [{
       "matches": [
-      	"https://www.quiubi.it/page/qui-ubi?*",
-      	"https://www.quiubi.it/page/qui-ubi/",
-      	"https://www.quiubi.it/qubictx/jsp/pages/home.jspx?*"
+      	"https://www.quiubi.it/page/qui-ubi/", /* Homepage */
+      	"https://www.quiubi.it/page/qui-ubi?*", /* Auth in error */
+      	"https://www.quiubi.it/qubictx/jsp/pages/home.jspx?pKy=Home&conversationId=*", /* Auth complete */
+      	"https://www.quiubi.it/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC" /* Pagina dei movimenti */
       ],
       "js": ["quiubiMediator.js"],
       "all_frames": true,

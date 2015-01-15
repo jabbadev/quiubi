@@ -5,6 +5,7 @@ port.onMessage.addListener(function(message){
 	if ( message.operation == "login" ) operation.login(message.options);
 	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
 	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
+	if ( message.operation == "saldo" ) operation.saldo();
 });
 
 var Operation = function(){
@@ -35,6 +36,19 @@ var Operation = function(){
 		  'cancelable': true
 		});
 		hrefMovCC.dispatchEvent(clickEvent);
+	};
+	
+	this.saldo = function(){
+		var saldo = {
+			contabile: document.querySelectorAll('table.saldoTop label[id^="frmContiCorrenti"]')[2].innerText,
+			disponibile: document.querySelectorAll('table.saldoCenter label[id^="frmContiCorrenti"]')[2].innerText
+		};
+		
+		port.postMessage({
+			operation: "saldoHandler",
+			options: saldo
+		});
+		
 	};
 	
 	this.isUserLogged = function(loggedUser){

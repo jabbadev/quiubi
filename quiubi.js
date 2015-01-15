@@ -62,13 +62,23 @@ var Quiubi = function(url,onTagerReady){
 	};
 	
 	this.saldo = function(onSaldo){
+		var self = this;
+		this._saldoHandler = onSaldo;
+		
 		this.port.postMessage({
 			operation: 'accessToMovimentiCC'
 		});
 		
 		this._onTargetReady = function(){
 			console.log('now in movimenti cc');
+			self.port.postMessage({
+				operation: 'saldo'
+			});
 		};
+	};
+	
+	this.saldoHandler = function(saldo){
+		this._saldoHandler(saldo);
 	};
 	
 	this.onTargetReloaded = function(){
@@ -101,7 +111,8 @@ chrome.runtime.onConnect.addListener(function(port){
 	   target.attachPort(port);
 	   
 	   port.onMessage.addListener(function(message){
-		   if ( message.operation == "userLoggedHandler" ) target.userLoggedHandler(message.options);  
+		   if ( message.operation == "userLoggedHandler" ) target.userLoggedHandler(message.options);
+		   if ( message.operation == "saldoHandler" ) target.saldoHandler(message.options);  
 	   });
    }
 });
