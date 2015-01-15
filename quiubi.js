@@ -77,6 +77,10 @@ var Quiubi = function(url,onTagerReady){
 		};
 	};
 	
+	this.movimeti = function(onMovimenti){
+		this.port.postMessage({operation:"accessToRicAdvMovCC"});
+	};
+	
 	this.saldoHandler = function(saldo){
 		this._saldoHandler(saldo);
 	};
@@ -104,6 +108,13 @@ var Quiubi = function(url,onTagerReady){
 	};
 	
 };
+
+chrome.webRequest.onBeforeRequest.addListener(
+	function(details) {
+		console.log('details ',details.url);
+	},
+	{urls: ["https://www.quiubi.it/qubictx/block/send-receive-updates"]},[]
+);
 
 chrome.runtime.onConnect.addListener(function(port){
    if( port.name="quiubi" ){

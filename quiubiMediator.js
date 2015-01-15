@@ -6,6 +6,7 @@ port.onMessage.addListener(function(message){
 	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
 	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
 	if ( message.operation == "saldo" ) operation.saldo();
+	if ( message.operation == "accessToRicAdvMovCC" ) operation.accessToRicAdvMovCC();
 });
 
 var Operation = function(){
@@ -49,6 +50,17 @@ var Operation = function(){
 			options: saldo
 		});
 		
+	};
+	
+	this.accessToRicAdvMovCC = function(){
+
+		var hrefRicAdv = document.querySelector('a[id="frmContiCorrenti:panelTabSet:0.1"');
+		var clickEvent = new MouseEvent('click', {
+		  'view': window,
+		  'bubbles': true,
+		  'cancelable': true
+		});
+		hrefRicAdv.dispatchEvent(clickEvent);
 	};
 	
 	this.isUserLogged = function(loggedUser){

@@ -10,6 +10,7 @@
     "page": "quiubi_page.html"
   },
   "permissions": [
+  	"webRequest",
     "https://www.quiubi.it/*"
   ],
   "content_scripts": [{
