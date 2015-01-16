@@ -78,6 +78,18 @@ var Quiubi = function(url,onTagerReady){
 	};
 	
 	this.movimeti = function(onMovimenti){
+		this.port.postMessage({
+			operation: 'accessToMovimentiCC'
+		});
+		
+		this._onTargetReady = function(){
+			console.log('now in movimenti cc');
+			console.log('vado a Ricerca avanzata ');
+			this.port.postMessage({
+				operation: 'accessToRicAdvMovCC'
+			});
+		};
+		
 		this.port.postMessage({operation:"accessToRicAdvMovCC"});
 	};
 	
