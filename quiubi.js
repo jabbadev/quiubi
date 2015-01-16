@@ -90,6 +90,10 @@ var Quiubi = function(url,onTagerReady){
 			});
 		};
 		
+		this._onRicercaAvanzata = function(){
+			console.log('sono in ricerca avanzata');
+		};
+		
 		this.port.postMessage({operation:"accessToRicAdvMovCC"});
 	};
 	
