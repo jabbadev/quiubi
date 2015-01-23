@@ -7,9 +7,14 @@ port.onMessage.addListener(function(message){
 	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
 	if ( message.operation == "saldo" ) operation.saldo();
 	if ( message.operation == "accessToRicAdvMovCC" ) operation.accessToRicAdvMovCC();
+	if ( message.operation == "impostaRicerca" ) operation.impostaRicerca(message.options);
 });
 
 var Operation = function(){
+	
+	function formatDate(date){
+		return String("00" + date.getDate()).slice(-2) + "/" + String("00" + date.getMonth()+1).slice(-2) + "/" + date.getFullYear();
+	}
 	
 	this.login = function(userCredential){
 		console.info('execute login');
@@ -91,6 +96,38 @@ var Operation = function(){
 			operation: "userLoggedHandler",
 			options: loginStatus
 		});
+	};
+	
+	this.impostaRicerca = function(ricOpt){
+		var al = new Date();
+		var dal = new Date();
+		dal.setDate(dal.getDate()-ricOpt.giorni);
+		
+		al = formatDate(al);
+		dal = formatDate(dal);
+				
+		document.querySelector('input[id="frmContiCorrenti:panelTabSet:0:dataDa"]').value = dal;
+		document.querySelector('input[id="frmContiCorrenti:panelTabSet:0:dataA"]').value = al;
+		
+		document.querySelector(
+			'input[id="frmContiCorrenti:panelTabSet:0:selectTipoImporto:_0"]'
+		).checked = false;
+		
+		document.querySelector(
+			'input[id="frmContiCorrenti:panelTabSet:0:selectTipoImporto:_1"]'
+		).checked = false;
+		
+		document.querySelector(
+			'input[id="frmContiCorrenti:panelTabSet:0:selectTipoImporto:_2"]'
+		).checked = false;
+		
+		var cerca = document.querySelector('div.divActionRight a');
+		var clickEvent = new MouseEvent('click', {
+			'view': window,
+			'bubbles': true,
+			'cancelable': true
+		});
+		cerca.dispatchEvent(clickEvent);
 	};
 	
 };

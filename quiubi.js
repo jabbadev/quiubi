@@ -77,7 +77,8 @@ var Quiubi = function(url,onTagerReady){
 		};
 	};
 	
-	this.movimeti = function(onMovimenti){
+	this.movimeti = function(giorni,onMovimenti){
+		
 		this.port.postMessage({
 			operation: 'accessToMovimentiCC'
 		});
@@ -91,10 +92,18 @@ var Quiubi = function(url,onTagerReady){
 		};
 		
 		this._onRicercaAvanzata = function(){
-			console.log('sono in ricerca avanzata');
+			console.log('imposta in ricerca avanzata');
+			this.port.postMessage({
+				operation: 'impostaRicerca',
+				options: {giorni: giorni}
+			})
 		};
 		
 		this.port.postMessage({operation:"accessToRicAdvMovCC"});
+	};
+	
+	this.ricAdvMovCCHandler = function(){
+		this._onRicercaAvanzata();
 	};
 	
 	this.saldoHandler = function(saldo){
@@ -125,9 +134,11 @@ var Quiubi = function(url,onTagerReady){
 	
 };
 
-chrome.webRequest.onBeforeRequest.addListener(
+chrome.webRequest.onCompleted.addListener(
 	function(details) {
-		console.log('details ',details.url);
+		if(details.url == "https://www.quiubi.it/qubictx/block/send-receive-updates" ){
+			//target.ricAdvMovCCHandler();
+		}
 	},
 	{urls: ["https://www.quiubi.it/qubictx/block/send-receive-updates"]},[]
 );
