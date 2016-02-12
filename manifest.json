@@ -11,7 +11,8 @@
   },
   "permissions": [
   	"webRequest",
-    "https://www.quiubi.it/*"
+    "https://www.ubibanca.com/*",
+    "https://csi.gstatic.com/*"
   ],
   "content_scripts": [{
       "matches": [

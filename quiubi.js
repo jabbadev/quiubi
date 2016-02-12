@@ -157,7 +157,7 @@ chrome.runtime.onConnect.addListener(function(port){
 
 
 chrome.browserAction.onClicked.addListener(function(){
-	target = Target.getInstance("https://www.quiubi.it/page/qui-ubi/",Quiubi,function(target){
+	target = Target.getInstance("https://www.ubibanca.com/",Quiubi,function(target){
 		console.log('target ready ',target);
 	});
 });
