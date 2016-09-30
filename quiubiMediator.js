@@ -17,10 +17,10 @@ var Operation = function(){
 	}
 
 	this.login = function(userCredential){
-		console.info('execute login');
+		console.info('execute login',userCredential);
 
-    var t = setInterval(function(){
-      var inputAccessoCliente = document.getElementById("toggle2");
+		var t = setInterval(function(){
+    		var inputAccessoCliente = document.getElementById("toggle2");
 			var formAccessoCliente = inputAccessoCliente.parentElement;
 			if ( formAccessoCliente.className == "ng-pristine ng-valid") {
 				console.log('button ready ...');
@@ -28,34 +28,39 @@ var Operation = function(){
 
 				var clickEvent = new MouseEvent('click', {
 				  'view': window,
-		  		'bubbles': true,
+		  		  'bubbles': true,
 				  'cancelable': true
-			  });
-				inputAccessoCliente.dispatchEvent(clickEvent);
+			    });
+			    inputAccessoCliente.dispatchEvent(clickEvent);
 
-        var t1 = setInterval(function(){
-					var loginBox = document.getElementsByClassName("ubi-login-menu-area")[0];
-					if ( loginBox.className == "ubi-login-menu-area" ){
+                var t1 = setInterval(function(){
+                	var loginBox = document.getElementsByClassName("ubi-login-menu-area")[0];
+                	if ( loginBox.className == "ubi-login-menu-area" ){
 						clearTimeout(t1);
 						console.log('login box ready ...')
 						var user = document.getElementById("login_codice_cliente");
+						console.log('user box: ',user)
 						user.value = userCredential.user;
+						console.log('value ',user.value)
 						var password = document.getElementById("login_psw");
 						password.value = userCredential.password;
+						console.log(document.getElementById("login_psw").value);
 
+						
+						list = document.getElementsByTagName('script');
+						for(i=0; i<list.length-1; i++) {console.log(list[i].src)};
+						
 						var subMit = document.getElementById('btnEntraPrivatiAffari');
+						console.log('button: ',subMit)
 						var clickEvent = new MouseEvent('click', {
 							'view': window,
 							'bubbles': true,
 							'cancelable': true
 						});
 						subMit.dispatchEvent(clickEvent);
-
-				  }
-
-				});
-
-
+						console.log('submit login')
+                	}
+				},1);
 			}
 			else {
 				console.log('button non ready')
