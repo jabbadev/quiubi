@@ -1,3 +1,4 @@
+console.log('load quiubi.js ...')
 var port = null;
 var mediator = null;
 var target = null;
@@ -42,15 +43,25 @@ var Quiubi = function(url,onTagerReady){
 		});
 		
 		this._onTargetReady = function(){
+			
+			console.log('login complete _onTargetReady')
+			
 			this.isUserLogged(user,function(loginStatus){
 				onAuthComplete(loginStatus);
 			});
 		}; 
 	};
 	
+	this.logout = function() {
+		this.port.postMessage({
+			operation: 'logout'
+		});
+	}
+	
 	this.isUserLogged = function(user,onResponse){
 		this._userLoggedHandler = onResponse;
 		
+		console.log('post isUserLogged',this.port)
 		this.port.postMessage({
 			operation: 'isUserLogged',
 			options: user
@@ -149,6 +160,7 @@ chrome.runtime.onConnect.addListener(function(port){
 	   target.attachPort(port);
 	   
 	   port.onMessage.addListener(function(message){
+		   console.log('message from target: ',message)
 		   if ( message.operation == "userLoggedHandler" ) target.userLoggedHandler(message.options);
 		   if ( message.operation == "saldoHandler" ) target.saldoHandler(message.options);  
 	   });

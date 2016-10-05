@@ -3,6 +3,7 @@ console.log('fire quiubi mediator');
 var port = chrome.runtime.connect({name:"quiubi"});
 port.onMessage.addListener(function(message){
 	if ( message.operation == "login" ) operation.login(message.options);
+	if ( message.operation == "logout" ) operation.logout(message.options);
 	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
 	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
 	if ( message.operation == "saldo" ) operation.saldo();
@@ -27,83 +28,12 @@ var Operation = function(){
 	this.login = function(userCredential){
 		console.info('execute login',userCredential);
 		window.postMessage({ operation: "_login", options: userCredential },"*");
-		
-//		var t = setInterval(function(){
-//    		var inputAccessoCliente = document.getElementById("toggle2");
-//			var formAccessoCliente = inputAccessoCliente.parentElement;
-//			if ( formAccessoCliente.className == "ng-pristine ng-valid") {
-//				console.log('button ready ...');
-//				clearTimeout(t);
-//
-//				var clickEvent = new MouseEvent('click', {
-//				  'view': window,
-//		  		  'bubbles': true,
-//				  'cancelable': true
-//			    });
-//			    inputAccessoCliente.dispatchEvent(clickEvent);
-//
-//                var t1 = setInterval(function(){
-//                	var loginBox = document.getElementsByClassName("ubi-login-menu-area")[0];
-//                	if ( loginBox.className == "ubi-login-menu-area" ){
-//						clearTimeout(t1);
-//						console.log('login box ready ...')
-//						var user = document.getElementById("login_codice_cliente");
-//						console.log('user box: ',user)
-//						user.value = userCredential.user;
-//						console.log('value ',user.value)
-//						var password = document.getElementById("login_psw");
-//						password.value = userCredential.password;
-//						console.log(document.getElementById("login_psw").value);
-//
-//						
-//						window.postMessage({ operation: "submitLogin" },"*");
-//						/*
-//						list = document.getElementsByTagName('script');
-//						for(i=0; i<list.length-1; i++) {console.log(list[i].src)};
-//						
-//						var subMit = document.getElementById('btnEntraPrivatiAffari');
-//						console.log('button: ',subMit)
-//						var clickEvent = new MouseEvent('click', {
-//							'view': window,
-//							'bubbles': true,
-//							'cancelable': true
-//						});
-//						subMit.dispatchEvent(clickEvent);
-//						console.log('submit login')
-//						*/
-//                	}
-//				},1);
-//			}
-//			else {
-//				console.log('button non ready')
-//			}
-		//},1);
-
-
-    /*
-		var loginBox = document.getElementsByClassName("ubi-login-menu-area")[0];
-		loginBox.className = "ubi-login-menu-area"
-
-    //setTimeout(function () {
-
-    console.log('exec login on login box ....');
-
-		var user = document.getElementById("login_codice_cliente");
-		user.value = userCredential.user;
-		var password = document.getElementById("login_psw");
-		password.value = userCredential.password;
-
-		var subMit = document.getElementById('btnEntraPrivatiAffari');
-		var clickEvent = new MouseEvent('click', {
-		  'view': window,
-  		'bubbles': true,
-		  'cancelable': true
-	  });
-		subMit.dispatchEvent(clickEvent);
-
-		//},3000);
-    */
 	};
+	
+	this.logout = function(){
+		console.info('exec logout');
+		window.postMessage({ operation: "_logout" },"*");
+	}
 
 	this.accessToMovimentiCC = function(){
 		var hrefMovCC = document.querySelector('a[href="/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC"');
@@ -140,29 +70,23 @@ var Operation = function(){
 	};
 
 	this.isUserLogged = function(loggedUser){
+
 		var loginStatus = {status: false, info: "Condizione inattesa"};
-
-		var errorMsgBox = document.getElementById("ERRORSDIV");
-
-		if( !!errorMsgBox ){
-			if ( errorMsgBox.innerText == "Attenzione\n" ){
-				loginStatus = { status: false, info: "Utente non loggato" };
-			}
-			if ( errorMsgBox.innerText == "Attenzione\nAutenticazione fallita (errore generico)"){
-				loginStatus = { status: false, info: "Autenticazione fallita" };
-			}
+		console.log('qui arrivo ...')
+		var fullNameDiv = document.getElementById('owcs-userfullname');
+		console.log()
+		if (fullNameDiv == null){
+			loginStatus = { status: false, info: "Utente non loggato" };
 		}
 		else {
-			var tdList = document.querySelectorAll('div.header  table table tr td');
-			var user = (tdList[4].innerText).split(' ')[2];
-			if ( user == loggedUser ){
-				loginStatus = {status: true, info: "Utente [" + user + " ] correttamente connesso" };
-			}
-			else {
-				loginStatus = { status: false, info: "Autenticazione avvenuta con utente differente" };
-			}
+			var userFullName = fullNameDiv.textContent;
+			loginStatus = {
+				status: true,
+				message: "Utente connesso",
+				details: { user: userFullName }
+			};
 		}
-
+				
 		port.postMessage({
 			operation: "userLoggedHandler",
 			options: loginStatus

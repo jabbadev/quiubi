@@ -16,7 +16,6 @@ var UbiHelper = function(){
     		var inputAccessoCliente = document.getElementById("toggle2");
 			var formAccessoCliente = inputAccessoCliente.parentElement;
 			if ( formAccessoCliente.className == "ng-pristine ng-valid") {
-				console.log('button ready ...');
 				clearTimeout(t);
 
 				var clickEvent = new MouseEvent('click', {
@@ -31,38 +30,20 @@ var UbiHelper = function(){
                 	if ( loginBox.className == "ubi-login-menu-area" ){
 						clearTimeout(t1);
 						console.log('login box ready ...')
-						var user = document.getElementById("login_codice_cliente");
-						console.log('user box: ',user)
-						user.value = userCredential.user;
-						console.log('value ',user.value)
-						var password = document.getElementById("login_psw");
-						password.value = userCredential.password;
-						console.log(document.getElementById("login_psw").value);
-
 						
-						//window.postMessage({ operation: "submitLogin" },"*");
-						
-						//list = document.getElementsByTagName('script');
-						//for(i=0; i<list.length-1; i++) {console.log(list[i].src)};
-						
-						var subMit = document.getElementById('btnEntraPrivatiAffari');
-						console.log('button: ',subMit)
-						var clickEvent = new MouseEvent('click', {
-							'view': window,
-							'bubbles': true,
-							'cancelable': true
-						});
-						subMit.dispatchEvent(clickEvent);
-						console.log('submit login')
-						
+						var $scope = angular.element('#login_codice_cliente').scope();
+						$scope.login.login_codice_cliente = userCredential.user;
+						$scope.login.login_psw = userCredential.password;
+						angular.element('#btnEntraPrivatiAffari').trigger('click');	
                 	}
                 },1);
 			}
-			else {
-				console.log('button non ready')
-			}
 		  },1);
 			
+		}
+		
+		if (msg.operation == "_logout") {
+			angular.element('button[ng-click="doLogout()"]').trigger('click');
 		}
 	};
 };

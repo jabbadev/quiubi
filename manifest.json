@@ -16,7 +16,7 @@
   ],
   "content_scripts": [{
       "matches": [
-      	"https://www.ubibanca.com/", /* Homepage */
+      	"https://www.ubibanca.com/*", /* Homepage */
       	"https://www.quiubi.it/page/qui-ubi?*", /* Auth in error */
       	"https://www.ubibanca.com/qui#/", /* Auth complete */
       	"https://www.quiubi.it/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC" /* Pagina dei movimenti */
