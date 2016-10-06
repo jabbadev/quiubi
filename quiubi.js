@@ -43,28 +43,56 @@ var Quiubi = function(url,onTagerReady){
 		});
 		
 		this._onTargetReady = function(){
-			
-			console.log('login complete _onTargetReady')
-			
-			this.isUserLogged(user,function(loginStatus){
+			this.isUserLogged(function(loginStatus){
 				onAuthComplete(loginStatus);
 			});
-		}; 
+		};
 	};
 	
-	this.logout = function() {
+	this.logout = function(onLogoutComplete) {
 		this.port.postMessage({
 			operation: 'logout'
 		});
-	}
+		
+		
+		
+		/*
+		this.isHomePage(function(resp){
+			if ( resp.status ){
+				onLogoutComplete({ status: true, message: "logout complete" })
+			}
+			else {
+				this._onTargetReady = function(){
+					onLogoutComplete()
+				};
+			}
+		})
+		*/
+	};
 	
-	this.isUserLogged = function(user,onResponse){
+	this._logoutHandler = function(onLogoutComplete){
+		onLogoutComplete()
+	};
+	
+	this.isHomePage = function(responseHandler){
+		this.port.postMessage({
+			operation: 'isHomePage'
+		});
+		
+		this._isHomePageHandler = function(response){
+			responseHandler(response);
+		}
+	};
+	
+	this.isHomePageHandler = function(response){
+		this._isHomePageHandler(response);
+	};
+	
+	this.isUserLogged = function(onResponse){
 		this._userLoggedHandler = onResponse;
 		
-		console.log('post isUserLogged',this.port)
 		this.port.postMessage({
-			operation: 'isUserLogged',
-			options: user
+			operation: 'isUserLogged'
 		});
 	};
 	
@@ -122,7 +150,6 @@ var Quiubi = function(url,onTagerReady){
 	};
 	
 	this.onTargetReloaded = function(){
-		console.log('implement target reloaded ...');
 		this._onTargetReady();
 	};
 	
@@ -162,7 +189,8 @@ chrome.runtime.onConnect.addListener(function(port){
 	   port.onMessage.addListener(function(message){
 		   console.log('message from target: ',message)
 		   if ( message.operation == "userLoggedHandler" ) target.userLoggedHandler(message.options);
-		   if ( message.operation == "saldoHandler" ) target.saldoHandler(message.options);  
+		   if ( message.operation == "saldoHandler" ) target.saldoHandler(message.options);
+		   if ( message.operation == "isHomePageHandler") target.isHomePageHandler(message.options);
 	   });
    }
 });

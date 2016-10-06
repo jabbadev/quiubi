@@ -4,7 +4,8 @@ var port = chrome.runtime.connect({name:"quiubi"});
 port.onMessage.addListener(function(message){
 	if ( message.operation == "login" ) operation.login(message.options);
 	if ( message.operation == "logout" ) operation.logout(message.options);
-	if ( message.operation == "isUserLogged" ) operation.isUserLogged(message.options);
+	if ( message.operation == "isUserLogged" ) operation.isUserLogged();
+	if ( message.operation == "isHomePage" ) operation.isHomePage();
 	if ( message.operation == "accessToMovimentiCC" ) operation.accessToMovimentiCC();
 	if ( message.operation == "saldo" ) operation.saldo();
 	if ( message.operation == "accessToRicAdvMovCC" ) operation.accessToRicAdvMovCC();
@@ -34,6 +35,30 @@ var Operation = function(){
 		console.info('exec logout');
 		window.postMessage({ operation: "_logout" },"*");
 	}
+	
+	this.isHomePage = function(){
+		response = {
+		   status: false,
+		   message: "isn't home page"
+		}
+		if (window.location.hostname == "www.ubibanca.com" && 
+			!!window.location.pathname.match(/^\/$|^\/logout-internet-banking$/)) {
+			
+			response = {
+				status: true,
+				message: "is the home page",
+				details: {
+					hostname: window.location.hostname,
+					pathname: window.location.pathname
+				}
+			};
+		}
+		
+		port.postMessage({
+			operation: "isHomePageHandler",
+			options: response
+		})
+	};
 
 	this.accessToMovimentiCC = function(){
 		var hrefMovCC = document.querySelector('a[href="/qubictx/jsp/pages/la_mia_situazione/lista_e_ricerca_movimenti_cc/ricerca_movimenti_cc.jspx?pKy=MovimentiCC"');
@@ -69,12 +94,11 @@ var Operation = function(){
 		hrefRicAdv.dispatchEvent(clickEvent);
 	};
 
-	this.isUserLogged = function(loggedUser){
+	this.isUserLogged = function(){
 
 		var loginStatus = {status: false, info: "Condizione inattesa"};
-		console.log('qui arrivo ...')
 		var fullNameDiv = document.getElementById('owcs-userfullname');
-		console.log()
+		
 		if (fullNameDiv == null){
 			loginStatus = { status: false, info: "Utente non loggato" };
 		}

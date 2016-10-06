@@ -5,9 +5,6 @@ var UbiHelper = function(){
 		
 		msg = message.data;
 		
-		console.log('dispatch message: ',msg.operation);
-		console.log('angular: ',angular)
-		
 		if ( msg.operation == "_login"){
 			
 			var userCredential = msg.options
@@ -29,8 +26,6 @@ var UbiHelper = function(){
                 	var loginBox = document.getElementsByClassName("ubi-login-menu-area")[0];
                 	if ( loginBox.className == "ubi-login-menu-area" ){
 						clearTimeout(t1);
-						console.log('login box ready ...')
-						
 						var $scope = angular.element('#login_codice_cliente').scope();
 						$scope.login.login_codice_cliente = userCredential.user;
 						$scope.login.login_psw = userCredential.password;
